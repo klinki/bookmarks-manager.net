@@ -1,5 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using Engine;
+using Engine.Filters;
+using Engine.Importers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,17 +17,41 @@ namespace FrontendWinForms
     public partial class Form1 : Form
     {
         BookmarkImporter importer;
+        List<BookmarkImporter> importers;
+
+        List<BookmarkDirectory> rootNodes;
 
         BookmarkDirectory data;
 
         private ObjectListView listView1;
-
+        private TreeListView treeListView1;
 
         public Form1()
         {
             InitializeComponent();
 
-            this.treeView1.NodeMouseClick += TreeView1_NodeMouseClick;
+            this.rootNodes = new List<BookmarkDirectory>();
+
+            this.treeListView1 = new TreeListView();
+            this.treeListView1.Dock = DockStyle.Fill;
+
+            this.splitContainer1.Panel1.Controls.Add(this.treeListView1);
+
+            this.treeListView1.Roots = this.rootNodes;
+            this.treeListView1.CanExpandGetter = x =>
+            {
+                if ((x as BookmarkNode).Type != BookmarkType.Directory)
+                    return false;
+
+                return (x as BookmarkDirectory).Children.Where(y => y.Type == BookmarkType.Directory).Count() > 0;
+            };
+            this.treeListView1.ChildrenGetter = x => new List<BookmarkNode>((x as BookmarkDirectory).Children.Where(y => y.Type == BookmarkType.Directory));
+
+            this.treeListView1.AllColumns.Add(new OLVColumn("Name", "Name"));
+            this.treeListView1.Columns.Add(this.treeListView1.AllColumns[0]);
+            this.treeListView1.AllColumns[0].FillsFreeSpace = true;
+
+            this.treeListView1.CellClick += TreeListView1_CellClick;
 
             this.listView1 = new FastObjectListView();
             this.listView1.Dock = DockStyle.Fill;
@@ -36,13 +62,55 @@ namespace FrontendWinForms
 
             this.listView1.AllColumns.Add(new OLVColumn("Name", "Name"));
             this.listView1.AllColumns.Add(new OLVColumn("Url", "Url"));
+            this.listView1.AllColumns.Add(new OLVColumn("Last Visited", "LastVisited"));
+            this.listView1.AllColumns.Add(new OLVColumn("Date Added", "Created"));
+
+            this.listView1.AllColumns[0].FreeSpaceProportion = 2;
+            this.listView1.AllColumns[1].FreeSpaceProportion = 2;
+
+//            this.listView1.AllColumns.ForEach(column => column.FillsFreeSpace = true);
 
             this.listView1.Columns.AddRange(new ColumnHeader[] {
                 this.listView1.AllColumns[0],
-                this.listView1.AllColumns[1]
+                this.listView1.AllColumns[1],
+                this.listView1.AllColumns[2],
+                this.listView1.AllColumns[3]
             });
 
             this.listView1.ShowGroups = false;
+
+            this.listView1.DragSource = new SimpleDragSource();
+            this.listView1.DropSink = new RearrangingDropSink(false);
+
+            this.listView1.ModelCanDrop += ListView1_ModelCanDrop;
+
+            this.importers = new List<BookmarkImporter>();
+
+            this.importers.Add(new ChromeImporter());
+            this.importers.Add(new FirefoxImporter());
+            this.importers.Add(new XmarksImporter());
+        }
+
+        private void TreeListView1_CellClick(object sender, CellClickEventArgs e)
+        {
+            this.setListViewItems(e.Model as BookmarkDirectory);
+        }
+
+        private void ListView1_ModelCanDrop(object sender, ModelDropEventArgs e)
+        {
+            BookmarkNode node = e.TargetModel as BookmarkNode;
+
+            if (node == null)
+            {
+                e.Effect = DragDropEffects.None;
+            }
+            else
+            {
+                if (node.Type == BookmarkType.Directory)
+                {
+                    e.Effect = DragDropEffects.Move;
+                }
+            }
         }
 
         private void ListBox1_DoubleClick(object sender, EventArgs e)
@@ -60,47 +128,41 @@ namespace FrontendWinForms
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.openFileDialog1.FileName = "";
+            this.openFileDialog1.Filter = "All files (*.*)|*.*|Google Chrome Bookmarks (*.*)|*.*|Firefox Bookmarks (*.json)|*.json";
+
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                importer = new ChromeImporter();
+                importer = ImporterRegistry.GetInstance().GetImporterForFile(this.openFileDialog1.FileName); // this.importers[this.openFileDialog1.FilterIndex - 2];
                 this.data = importer.fromFile(this.openFileDialog1.FileName);
 
-                var visitor = new BookmarkDirectoryNodeVisitor();
-                var directoryHierarchy = visitor.GetOnlyDirectories(this.data);
-
-                this.treeView1.Nodes.AddRange(directoryHierarchy.ToArray());     
-        
+                this.rootNodes.Add(this.data);
+                this.treeListView1.SetObjects(this.rootNodes);
             }
-        }
-
-        private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            this.setListViewItems(((BookmarkDirectoryNode)e.Node).BookmarkDirectory);
         }
 
         protected void setListViewItems(BookmarkDirectory directory)
         {
+            if (directory != null)
             this.listView1.SetObjects(directory.Children);
-            /*
+        }
 
+        private void findDuplicitiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BookmarkDeduplicator deduplicator = new BookmarkDeduplicator();
+            IEnumerable<Bookmark> duplicities = deduplicator.GetDuplicateBookmarks(this.data);
 
-            var listViewData = directory.Children.ConvertAll(node =>
+            BookmarkDirectory duplicateRoot = new BookmarkDirectory("Duplicate Bookmarks");
+
+            foreach (var duplicity in duplicities)
             {
-                var item = new ListViewItem();
+                duplicateRoot.AddBookmark(duplicity);
+            }
 
-                item.SubItems.Add(node.Name);
+            this.data.AddChild(duplicateRoot);
+            
+            this.treeListView1.Refresh();
 
-                if (node.Type == BookmarkType.Bookmark)
-                    item.SubItems.Add((node as Bookmark).Url);
-
-                item.Tag = node;
-
-                return item;
-            });
-
-            this.listView1.Items.Clear();
-            this.listView1.Items.AddRange(listViewData.ToArray());
-            */
         }
     }
 }
