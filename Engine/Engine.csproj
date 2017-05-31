@@ -45,9 +45,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bookmarks.cs" />
-    <Compile Include="BookmarksImporter.cs" />
     <Compile Include="Deduplicator.cs" />
+    <Compile Include="Filters\DirectoryFilter.cs" />
     <Compile Include="Importer.cs" />
+    <Compile Include="Importers\ImporterRegistry.cs" />
+    <Compile Include="Importers\FirefoxImporter.cs" />
+    <Compile Include="Importers\ChromeImporter.cs" />
+    <Compile Include="Importers\XmarksImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Qualificator.cs" />
     <Compile Include="SimilarityCalculator.cs" />
@@ -55,6 +59,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

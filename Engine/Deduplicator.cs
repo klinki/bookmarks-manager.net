@@ -9,7 +9,7 @@ namespace Engine
 
         public void Visit(BookmarkDirectory directory)
         {
-            directory.Bookmarks.ForEach(bookmark => this.Visit(bookmark));
+            directory.Children.ForEach(bookmark => bookmark.Accept(this));
         }
     }
 
