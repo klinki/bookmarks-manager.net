@@ -2,11 +2,13 @@
 using Engine;
 using Engine.Filters;
 using Engine.Importers;
+using Engine.Serializers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -163,6 +165,17 @@ namespace FrontendWinForms
             
             this.treeListView1.Refresh();
 
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                var serializer = new JsonSerializer();
+                var data = serializer.Serialize(this.rootNodes);
+
+                File.WriteAllText(this.saveFileDialog1.FileName, data);
+            }
         }
     }
 }
