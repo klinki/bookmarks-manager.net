@@ -10,11 +10,14 @@ namespace Engine
     public interface BookmarkImporter
     {
         BookmarkDirectory fromFile(string path);
+        bool canHandleFile(string path);
     }
 
     public abstract class AbstractBookmarkImporter : BookmarkImporter
     {
         public abstract BookmarkDirectory fromFile(string path);
+
+        public abstract bool canHandleFile(string path);
 
         protected BookmarkDirectory createRootDirectory(string path)
         {
@@ -22,100 +25,6 @@ namespace Engine
             string fileName = path.Substring(lastSlash + 1);
 
             return new BookmarkDirectory("Imported from " + fileName);
-        }
-    }
-
-    public class ChromeImporter : AbstractBookmarkImporter
-    {
-        public override BookmarkDirectory fromFile(string path)
-        {
-            var root = this.createRootDirectory(path);
-
-            using (StreamReader streamReader = new StreamReader(path, Encoding.UTF8))
-            using (JsonTextReader reader = new JsonTextReader(streamReader))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                var o = (JToken)serializer.Deserialize(reader);
-
-                List<BookmarkDirectory> directories = new JToken[]{ o["roots"]["bookmark_bar"], o["roots"]["other"] }.ToList()
-                    .ConvertAll(r =>
-                    {
-                        return (BookmarkDirectory)this.GetNode(r, root);
-                    });
-            }
-
-            return root;
-        }
-
-        protected BookmarkNode GetNode(JToken token, BookmarkDirectory parent)
-        {
-            var node = this.GetNode(token);
-            parent.AddChild(node);
-
-            return node;
-        }
-
-        protected BookmarkNode GetNode(JToken token)
-        {
-            var type = token["type"].ToString();
-            if (type == "folder") {
-                return this.GetDirectory(token);
-            } else if (type == "url") {
-                return this.GetBookmark(token);
-            } else {
-                throw new System.Exception("Invalid type");
-            }
-        }
-
-        protected BookmarkDirectory GetDirectory(JToken token)
-        {
-            var directory = new BookmarkDirectory();
-            this.SetBookmarkNodeProperties(directory, token);
-
-            if (token["children"] != null)
-            {
-                foreach (var child in token["children"])
-                {
-                    BookmarkNode node = this.GetNode(child, directory);
-                }
-            }
-
-            return directory;
-        }
-
-        protected Bookmark GetBookmark(JToken token)
-        {
-            var bookmark = new Bookmark();
-            this.SetBookmarkNodeProperties(bookmark, token);
-            bookmark.Id = int.Parse(token["id"].ToString());
-            bookmark.Url = token["url"].ToString();
-
-            return bookmark;
-        }
-
-        protected void SetBookmarkNodeProperties(BookmarkNode node, JToken token)
-        {
-            node.Name = token["name"].ToString();
-        }
-    }
-
-    public class FirefoxImporter : AbstractBookmarkImporter
-    {
-        public override BookmarkDirectory fromFile(string path)
-        {
-            var root = this.createRootDirectory(path);
-
-            return root;
-        }
-    }
-
-    public class XmarksImporter : AbstractBookmarkImporter
-    {
-        public override BookmarkDirectory fromFile(string path)
-        {
-            var root = this.createRootDirectory(path);
-
-            return root;
         }
     }
 }
