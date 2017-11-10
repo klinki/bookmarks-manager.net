@@ -60,6 +60,7 @@
     <Compile Include="Serializers\Json\JsonSerializer.cs" />
     <Compile Include="SimilarityCalculator.cs" />
     <Compile Include="Trie.cs" />
+    <Compile Include="TrieBasedSimilarityCalculator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
