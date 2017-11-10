@@ -129,7 +129,7 @@ namespace Engine
         public abstract void Accept(BookmarkVisitor visitor);
     }
 
-    public class Bookmark : BookmarkNode
+    public class Bookmark : BookmarkNode, IComparable<Bookmark>
     {
         public string Url
         {
@@ -172,6 +172,11 @@ namespace Engine
         public override void Accept(BookmarkVisitor visitor)
         {
             visitor.Visit(this);
+        }
+
+        public int CompareTo(Bookmark other)
+        {
+            return this.Id.CompareTo(other.Id);
         }
     }
 

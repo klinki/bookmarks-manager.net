@@ -177,5 +177,20 @@ namespace FrontendWinForms
                 File.WriteAllText(this.saveFileDialog1.FileName, data);
             }
         }
+
+        private void findSimilaritiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var qualifier = new SimilarityCalculator();
+
+            var parallelResult = qualifier.QualifyByServerParallel(this.data);
+
+            var result = qualifier.QualifyByServer(this.data);
+
+            if (result == null)
+            {
+
+            }
+
+        }
     }
 }

@@ -31,12 +31,13 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.analysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findDuplicitiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.findSimilaritiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.SuspendLayout();
@@ -65,14 +66,22 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // analysisToolStripMenuItem
             // 
             this.analysisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.findDuplicitiesToolStripMenuItem});
+            this.findDuplicitiesToolStripMenuItem,
+            this.findSimilaritiesToolStripMenuItem});
             this.analysisToolStripMenuItem.Name = "analysisToolStripMenuItem";
             this.analysisToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
             this.analysisToolStripMenuItem.Text = "Analysis";
@@ -80,7 +89,7 @@
             // findDuplicitiesToolStripMenuItem
             // 
             this.findDuplicitiesToolStripMenuItem.Name = "findDuplicitiesToolStripMenuItem";
-            this.findDuplicitiesToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.findDuplicitiesToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.findDuplicitiesToolStripMenuItem.Text = "Find Duplicities";
             this.findDuplicitiesToolStripMenuItem.Click += new System.EventHandler(this.findDuplicitiesToolStripMenuItem_Click);
             // 
@@ -97,12 +106,12 @@
             this.splitContainer1.SplitterDistance = 94;
             this.splitContainer1.TabIndex = 1;
             // 
-            // saveToolStripMenuItem
+            // findSimilaritiesToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            this.findSimilaritiesToolStripMenuItem.Name = "findSimilaritiesToolStripMenuItem";
+            this.findSimilaritiesToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.findSimilaritiesToolStripMenuItem.Text = "Find Similarities";
+            this.findSimilaritiesToolStripMenuItem.Click += new System.EventHandler(this.findSimilaritiesToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -134,6 +143,7 @@
         private System.Windows.Forms.ToolStripMenuItem findDuplicitiesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem findSimilaritiesToolStripMenuItem;
     }
 }
 

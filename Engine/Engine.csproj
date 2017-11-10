@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bookmarks.cs" />
+    <Compile Include="ConcurrentSet.cs" />
     <Compile Include="Deduplicator.cs" />
     <Compile Include="Filters\DirectoryFilter.cs" />
     <Compile Include="Importer.cs" />

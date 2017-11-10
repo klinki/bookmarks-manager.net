@@ -10,10 +10,21 @@ namespace Engine
         public static string GetServerName(Bookmark bookmark)
         {
             int protocolSeparator = bookmark.Url.IndexOf("//");
-            string withoutProtocol = bookmark.Url.Substring(protocolSeparator);
+
+            if (protocolSeparator == -1)
+            {
+                return "";
+            }
+
+            string withoutProtocol = bookmark.Url.Substring(protocolSeparator + 2);
             int slash = withoutProtocol.IndexOf("/");
 
-            return withoutProtocol.Substring(slash);
+            if (slash == -1)
+            {
+                return "";
+            }
+
+            return withoutProtocol.Substring(0, slash);
         }
 
         public override void Visit(Bookmark bookmark)
