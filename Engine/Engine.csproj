@@ -59,6 +59,7 @@
     <Compile Include="Serializers\Json\BookmarkNodeJsonConverter.cs" />
     <Compile Include="Serializers\Json\JsonSerializer.cs" />
     <Compile Include="SimilarityCalculator.cs" />
+    <Compile Include="Trie.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

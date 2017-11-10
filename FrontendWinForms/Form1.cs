@@ -18,8 +18,8 @@ namespace FrontendWinForms
 {
     public partial class Form1 : Form
     {
-        BookmarkImporter importer;
-        List<BookmarkImporter> importers;
+        IBookmarkImporter importer;
+        List<IBookmarkImporter> importers;
 
         List<BookmarkDirectory> rootNodes;
 
@@ -86,7 +86,7 @@ namespace FrontendWinForms
 
             this.listView1.ModelCanDrop += ListView1_ModelCanDrop;
 
-            this.importers = new List<BookmarkImporter>();
+            this.importers = new List<IBookmarkImporter>();
 
             this.importers.Add(new ChromeImporter());
             this.importers.Add(new FirefoxImporter());
@@ -136,7 +136,7 @@ namespace FrontendWinForms
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 importer = ImporterRegistry.GetInstance().GetImporterForFile(this.openFileDialog1.FileName); // this.importers[this.openFileDialog1.FilterIndex - 2];
-                this.data = importer.fromFile(this.openFileDialog1.FileName);
+                this.data = importer.FromFile(this.openFileDialog1.FileName);
 
                 this.rootNodes.Add(this.data);
                 this.treeListView1.SetObjects(this.rootNodes);

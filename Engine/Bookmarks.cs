@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Engine
 {
-    public interface BookmarkVisitor
+    public interface IBookmarkVisitor
     {
         void Visit(Bookmark bookmark);
         void Visit(BookmarkDirectory directory);
@@ -23,7 +23,7 @@ namespace Engine
         }
     }
 
-    public class BookmarkEventVisitor : BookmarkVisitor
+    public class BookmarkEventVisitor : IBookmarkVisitor
     {
         public event EventHandler<BookmarkEventArgs<BookmarkDirectory>> OnBookmarkDirectoryOpen;
         public event EventHandler<BookmarkEventArgs<BookmarkDirectory>> OnBookmarkDirectoryClose;
@@ -31,26 +31,23 @@ namespace Engine
 
         public void Visit(BookmarkDirectory directory)
         {
-            if (this.OnBookmarkDirectoryOpen != null)
-                this.OnBookmarkDirectoryOpen(this, new BookmarkEventArgs<BookmarkDirectory>(directory));
+            this.OnBookmarkDirectoryOpen?.Invoke(this, new BookmarkEventArgs<BookmarkDirectory>(directory));
 
             foreach (var node in directory.Children)
             {
                 node.Accept(this);
             }
 
-            if (this.OnBookmarkDirectoryClose != null)
-                this.OnBookmarkDirectoryClose(this, new BookmarkEventArgs<BookmarkDirectory>(directory));
+            this.OnBookmarkDirectoryClose?.Invoke(this, new BookmarkEventArgs<BookmarkDirectory>(directory));
         }
 
         public void Visit(Bookmark bookmark)
         {
-            if (this.OnBookmarkOpen != null)
-                this.OnBookmarkOpen(this, new BookmarkEventArgs<Bookmark>(bookmark));
+            this.OnBookmarkOpen?.Invoke(this, new BookmarkEventArgs<Bookmark>(bookmark));
         }
     }
 
-    public interface Visitable<T>
+    public interface IVisitable<T>
     {
         void Accept(T visitor);        
     }
@@ -92,7 +89,7 @@ namespace Engine
         Directory
     }
 
-    public abstract class BookmarkNode : Visitable<BookmarkVisitor>
+    public abstract class BookmarkNode : IVisitable<IBookmarkVisitor>
     {
         public int Id 
         {
@@ -126,7 +123,7 @@ namespace Engine
 
         public abstract BookmarkType Type { get; }
 
-        public abstract void Accept(BookmarkVisitor visitor);
+        public abstract void Accept(IBookmarkVisitor visitor);
     }
 
     public class Bookmark : BookmarkNode, IComparable<Bookmark>
@@ -169,7 +166,7 @@ namespace Engine
 
         public override BookmarkType Type { get { return BookmarkType.Bookmark; } }
 
-        public override void Accept(BookmarkVisitor visitor)
+        public override void Accept(IBookmarkVisitor visitor)
         {
             visitor.Visit(this);
         }
@@ -242,7 +239,7 @@ namespace Engine
             directory.Parent = null;
         }
 
-        public override void Accept(BookmarkVisitor visitor)
+        public override void Accept(IBookmarkVisitor visitor)
         {
             visitor.Visit(this);
         }

@@ -24,7 +24,7 @@ namespace BookmarksManager
     public partial class MainWindow : Window
     {
         IEnumerable<BookmarkDirectory> Bookmarks;
-        BookmarkImporter importer;
+        IBookmarkImporter importer;
 
         public MainWindow()
         {
@@ -38,7 +38,7 @@ namespace BookmarksManager
             if (dialog.ShowDialog() == true)
             {
                 importer = new ChromeImporter();
-                this.Bookmarks = new BookmarkDirectory[]{ importer.fromFile(dialog.FileName) };
+                this.Bookmarks = new BookmarkDirectory[]{ importer.FromFile(dialog.FileName) };
 
                 this.DataContext = this.Bookmarks;
             }

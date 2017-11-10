@@ -9,7 +9,7 @@ namespace Engine.Importers
     public class ImporterRegistry
     {
         protected static ImporterRegistry instance;
-        protected HashSet<BookmarkImporter> registeredImporters;
+        protected HashSet<IBookmarkImporter> registeredImporters;
 
         public static ImporterRegistry GetInstance()
         {
@@ -23,21 +23,21 @@ namespace Engine.Importers
 
         protected ImporterRegistry()
         {
-            this.registeredImporters = new HashSet<BookmarkImporter>();
+            this.registeredImporters = new HashSet<IBookmarkImporter>();
         }
 
-        public ImporterRegistry Register(BookmarkImporter importer)
+        public ImporterRegistry Register(IBookmarkImporter importer)
         {
             this.registeredImporters.Add(importer);
 
             return this;
         }
 
-        public BookmarkImporter GetImporterForFile(string filePath)
+        public IBookmarkImporter GetImporterForFile(string filePath)
         {
             foreach (var importer in this.registeredImporters)
             {
-                if (importer.canHandleFile(filePath))
+                if (importer.CanHandleFile(filePath))
                 {
                     return importer;
                 }

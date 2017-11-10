@@ -16,7 +16,7 @@ namespace Engine.Importers
             ImporterRegistry.GetInstance().Register(new BookmarksManagerImporter());
         }
 
-        public override bool canHandleFile(string path)
+        public override bool CanHandleFile(string path)
         {
             using (StreamReader streamReader = new StreamReader(path, Encoding.UTF8))
             using (JsonTextReader reader = new JsonTextReader(streamReader))
@@ -28,9 +28,9 @@ namespace Engine.Importers
             }
         }
 
-        public override BookmarkDirectory fromFile(string path)
+        public override BookmarkDirectory FromFile(string path)
         {
-            var root = this.createRootDirectory(path);
+            var root = this.CreateRootDirectory(path);
 
             using (StreamReader streamReader = new StreamReader(path, Encoding.UTF8))
             {

@@ -7,19 +7,19 @@ using System.Linq;
 
 namespace Engine
 {
-    public interface BookmarkImporter
+    public interface IBookmarkImporter
     {
-        BookmarkDirectory fromFile(string path);
-        bool canHandleFile(string path);
+        BookmarkDirectory FromFile(string path);
+        bool CanHandleFile(string path);
     }
 
-    public abstract class AbstractBookmarkImporter : BookmarkImporter
+    public abstract class AbstractBookmarkImporter : IBookmarkImporter
     {
-        public abstract BookmarkDirectory fromFile(string path);
+        public abstract BookmarkDirectory FromFile(string path);
 
-        public abstract bool canHandleFile(string path);
+        public abstract bool CanHandleFile(string path);
 
-        protected BookmarkDirectory createRootDirectory(string path)
+        protected BookmarkDirectory CreateRootDirectory(string path)
         {
             int lastSlash = path.LastIndexOf(Path.DirectorySeparatorChar);
             string fileName = path.Substring(lastSlash + 1);

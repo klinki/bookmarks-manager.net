@@ -63,8 +63,7 @@ namespace System.Collections.Concurrent
 
         public bool TryRemove(T item)
         {
-            byte dontCare;
-            return storage.TryRemove(item, out dontCare);
+            return storage.TryRemove(item, out byte dontCare);
         }
 
         void ICollection<T>.Add(T item)
@@ -75,7 +74,9 @@ namespace System.Collections.Concurrent
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
             foreach (KeyValuePair<T, byte> pair in storage)
+            {
                 array[arrayIndex++] = pair.Key;
+            }
         }
 
         bool ICollection<T>.IsReadOnly

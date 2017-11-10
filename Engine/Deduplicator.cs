@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Engine
 {
-    public abstract class AbstractBookmarksVisitor : BookmarkVisitor
+    public abstract class AbstractBookmarksVisitor : IBookmarkVisitor
     {
         public abstract void Visit(Bookmark bookmark);
 

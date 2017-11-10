@@ -71,18 +71,18 @@ namespace Engine
             private set;
         }
 
-        public void precalculateSimilarities()
+        public void PrecalculateSimilarities()
         {
             this.PrecalculatedSimilarities = new Dictionary<Bookmark, ICollection<BookmarkSimilarityIndex>>();
 
             foreach (var similarityIndex in this.SimilarBookmarks)
             {
-                this.addBookmarkToList(similarityIndex.From, similarityIndex);
-                this.addBookmarkToList(similarityIndex.To, similarityIndex);
+                this.AddBookmarkToList(similarityIndex.From, similarityIndex);
+                this.AddBookmarkToList(similarityIndex.To, similarityIndex);
             }
         }
 
-        protected void addBookmarkToList(Bookmark node, BookmarkSimilarityIndex index)
+        protected void AddBookmarkToList(Bookmark node, BookmarkSimilarityIndex index)
         {
             if (!this.PrecalculatedSimilarities.ContainsKey(node))
             {
@@ -148,10 +148,12 @@ namespace Engine
             return v1[t.Length];
         }
 
-        protected BookmarksSimilarityResult findDuplicities(List<Bookmark> bookmarks, int startFrom = 0, int to = -1)
+        protected BookmarksSimilarityResult FindDuplicities(List<Bookmark> bookmarks, int startFrom = 0, int to = -1)
         {
-            var result = new BookmarksSimilarityResult();
-            result.SimilarBookmarks = new HashSet<BookmarkSimilarityIndex>(new BookmarkSimilarityIndexComparer());
+            var result = new BookmarksSimilarityResult
+            {
+                SimilarBookmarks = new HashSet<BookmarkSimilarityIndex>(new BookmarkSimilarityIndexComparer())
+            };
 
             var possibleDuplicates = result.BookmarksByServer = new Dictionary<string, SortedSet<Bookmark>>();
 
@@ -194,7 +196,7 @@ namespace Engine
         public BookmarksSimilarityResult QualifyByServer(BookmarkDirectory root, int startFrom = 0, int to = -1)
         {
             root.Accept(this);
-            return this.findDuplicities(this.bookmarks);
+            return this.FindDuplicities(this.bookmarks);
         }
 
         public BookmarksSimilarityResult QualifyByServerParallel(BookmarkDirectory root)
@@ -214,7 +216,7 @@ namespace Engine
 
             Parallel.ForEach(rangePartitioner, (range, loopState) =>
             {
-                var result = this.findDuplicities(this.bookmarks, range.Item1, range.Item2 - 1);
+                var result = this.FindDuplicities(this.bookmarks, range.Item1, range.Item2 - 1);
 
                 foreach (var keyValuePair in result.BookmarksByServer)
                 {
