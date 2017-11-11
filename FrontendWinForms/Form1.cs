@@ -192,9 +192,9 @@ namespace FrontendWinForms
             var trieBasedQualifier = new TrieBasedSimilarityCalculator();
             var data = trieBasedQualifier.LexicographicallySort(trieBasedQualifier.GetList(this.data));
 
-            var parallelResult = qualifier.QualifyByServerParallel(this.data);
+            var parallelResult = qualifier.QualifyByServerParallel(data);
 
-            var result = qualifier.QualifyByServer(this.data);
+            var result = qualifier.QualifyByServer(data);
 
             if (result == null)
             {

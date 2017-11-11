@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Engine
 {
@@ -9,22 +9,21 @@ namespace Engine
 
         public static string GetServerName(Bookmark bookmark)
         {
-            int protocolSeparator = bookmark.Url.IndexOf("//");
+            int protocolSeparator = bookmark.Url.IndexOf("//", 0, StringComparison.CurrentCulture);
 
             if (protocolSeparator == -1)
             {
                 return "";
             }
 
-            string withoutProtocol = bookmark.Url.Substring(protocolSeparator + 2);
-            int slash = withoutProtocol.IndexOf("/");
+            int slash = bookmark.Url.IndexOf('/', protocolSeparator + 2);
 
             if (slash == -1)
             {
                 return "";
             }
 
-            return withoutProtocol.Substring(0, slash);
+            return bookmark.Url.Substring(protocolSeparator + 2, slash - protocolSeparator - 2);
         }
 
         public override void Visit(Bookmark bookmark)

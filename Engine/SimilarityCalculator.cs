@@ -197,17 +197,15 @@ namespace Engine
             return result;
         }
 
-        public BookmarksSimilarityResult QualifyByServer(BookmarkDirectory root, int startFrom = 0, int to = -1)
+        public BookmarksSimilarityResult QualifyByServer(List<Bookmark> bookmarks, int startFrom = 0, int to = -1)
         {
-            root.Accept(this);
+            this.bookmarks = bookmarks;
             return this.FindDuplicities(this.bookmarks);
         }
 
-        public BookmarksSimilarityResult QualifyByServerParallel(BookmarkDirectory root)
+        public BookmarksSimilarityResult QualifyByServerParallel(List<Bookmark> bookmarks)
         {
-            this.bookmarks = new List<Bookmark>();
-            root.Accept(this);
-
+            this.bookmarks = bookmarks;
             var rangePartitioner = Partitioner.Create(0, this.bookmarks.Count);
 
             var dictionary = new ConcurrentDictionary<string, SortedSet<Bookmark>>();

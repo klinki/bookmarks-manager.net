@@ -175,11 +175,10 @@ namespace Engine
                 catch (DuplicateElementException e)
                 {
                     Bookmark original = trie.Get(bookmark.Url);
-                    //original.
+
                     if (original != null)
                     {
                         if (Math.Max(original.Tags.Count, bookmark.Tags.Count) > 0)
-//                        if (original.Tags.Count != bookmark.Tags.Count)
                         {
                             HashSet<Tag> mergedTags = new HashSet<Tag>();
                             mergedTags.UnionWith(original.Tags);
@@ -187,8 +186,6 @@ namespace Engine
 
                             original.Tags = mergedTags.ToList();
                         }
-
-                        Console.Write("Hello");
                     }
                 }
             }
