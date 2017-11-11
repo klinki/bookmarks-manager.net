@@ -9,7 +9,7 @@ namespace Engine
 
         public static string GetServerName(Bookmark bookmark)
         {
-            int protocolSeparator = bookmark.Url.IndexOf("//", 0, StringComparison.CurrentCulture);
+            int protocolSeparator = bookmark.Url.IndexOf("//", 0, StringComparison.Ordinal);
 
             if (protocolSeparator == -1)
             {
