@@ -34,10 +34,10 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.analysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findDuplicitiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findSimilaritiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.findSimilaritiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.SuspendLayout();
@@ -93,6 +93,13 @@
             this.findDuplicitiesToolStripMenuItem.Text = "Find Duplicities";
             this.findDuplicitiesToolStripMenuItem.Click += new System.EventHandler(this.findDuplicitiesToolStripMenuItem_Click);
             // 
+            // findSimilaritiesToolStripMenuItem
+            // 
+            this.findSimilaritiesToolStripMenuItem.Name = "findSimilaritiesToolStripMenuItem";
+            this.findSimilaritiesToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.findSimilaritiesToolStripMenuItem.Text = "Find Similarities";
+            this.findSimilaritiesToolStripMenuItem.Click += new System.EventHandler(this.findSimilaritiesToolStripMenuItem_Click);
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
@@ -106,15 +113,9 @@
             this.splitContainer1.SplitterDistance = 94;
             this.splitContainer1.TabIndex = 1;
             // 
-            // findSimilaritiesToolStripMenuItem
-            // 
-            this.findSimilaritiesToolStripMenuItem.Name = "findSimilaritiesToolStripMenuItem";
-            this.findSimilaritiesToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            this.findSimilaritiesToolStripMenuItem.Text = "Find Similarities";
-            this.findSimilaritiesToolStripMenuItem.Click += new System.EventHandler(this.findSimilaritiesToolStripMenuItem_Click);
-            // 
             // Form1
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
@@ -123,6 +124,8 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

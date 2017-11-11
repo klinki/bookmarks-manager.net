@@ -44,11 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bookmarks.cs" />
+    <Compile Include="Bookmarks\Bookmark.cs" />
+    <Compile Include="Bookmarks\BookmarkDirectory.cs" />
+    <Compile Include="Bookmarks\BookmarkEventVisitor.cs" />
+    <Compile Include="Bookmarks\BookmarkNode.cs" />
     <Compile Include="ConcurrentSet.cs" />
     <Compile Include="Deduplicator.cs" />
     <Compile Include="Filters\DirectoryFilter.cs" />
-    <Compile Include="Importer.cs" />
+    <Compile Include="Importers\Importer.cs" />
     <Compile Include="Importers\BookmarksManagerImporter.cs" />
     <Compile Include="Importers\ImporterRegistry.cs" />
     <Compile Include="Importers\FirefoxImporter.cs" />
@@ -59,6 +62,7 @@
     <Compile Include="Serializers\Json\BookmarkNodeJsonConverter.cs" />
     <Compile Include="Serializers\Json\JsonSerializer.cs" />
     <Compile Include="SimilarityCalculator.cs" />
+    <Compile Include="Bookmarks\Tag.cs" />
     <Compile Include="Trie.cs" />
     <Compile Include="TrieBasedSimilarityCalculator.cs" />
   </ItemGroup>

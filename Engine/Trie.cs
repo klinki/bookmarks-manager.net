@@ -105,6 +105,9 @@ namespace Engine
 
         public bool MoveNext()
         {
+            /**
+             * Initial case
+             */
             if (this._current == this._root)
             {
                 if (this._index != 0)
@@ -121,9 +124,21 @@ namespace Engine
                 }
             }
 
+            /**
+             * Has siblings - go to sibling
+             */
             if (this._current.Next != null)
             {
                 this._current = this.findLeftMost(this._current.Next);
+            }
+            /**
+             * Special case - prefix is also part of trie
+             * ( "ahoj", "ahojky" )
+             */
+            else if (this._current.Children.Count > 1)
+            {
+                this._current = this.findLeftMost(this._current.Children[1]);
+                this._parent = this._current.Parent;
             }
             else
             {
@@ -161,6 +176,13 @@ namespace Engine
         }
     }
 
+    public class DuplicateElementException : Exception
+    {
+        public DuplicateElementException(string message) : base(message)
+        {
+        }
+    }
+
     public class Trie<T> : IEnumerable<Node<T>>
     {
         private readonly Node<T> _root;
@@ -169,6 +191,8 @@ namespace Engine
         {
             _root = new Node<T>('^', 0, null);
         }
+
+        public int Count { get; protected set; }
 
         public Node<T> Prefix(string s)
         {
@@ -190,7 +214,21 @@ namespace Engine
             return result;
         }
 
-        public bool Search(string s)
+        public T Get(string s)
+        {
+            var prefix = Prefix(s);
+
+            if (prefix.Depth == s.Length && prefix.FindChildNode('$') != null)
+            {
+                return prefix.Value;
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public bool Contains(string s)
         {
             var prefix = Prefix(s);
             return prefix.Depth == s.Length && prefix.FindChildNode('$') != null;
@@ -209,6 +247,11 @@ namespace Engine
             var commonPrefix = Prefix(s);
             var current = commonPrefix;
 
+            if (current.Depth == s.Length)
+            {
+                throw new DuplicateElementException("Item already in trie");
+            }
+
             for (var i = current.Depth; i < s.Length; i++)
             {
                 var newNode = new Node<T>(s[i], current.Depth + 1, current, value);
@@ -217,11 +260,12 @@ namespace Engine
             }
 
             current.AddChildNode(new Node<T>('$', current.Depth + 1, current));
+            this.Count++;
         }
 
         public void Delete(string s)
         {
-            if (Search(s))
+            if (Contains(s))
             {
                 var node = Prefix(s).FindChildNode('$');
 

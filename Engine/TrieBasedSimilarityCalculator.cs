@@ -1,104 +1,17 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Engine
 {
-    public class BookmarkSimilarityIndexComparer : IEqualityComparer<BookmarkSimilarityIndex>
-    {
-        public bool Equals(BookmarkSimilarityIndex x, BookmarkSimilarityIndex y)
-        {
-            if (object.ReferenceEquals(x, y)) return true;
-
-            if (x == null || y == null) return false;
-
-            return (x.From == y.From && x.To == y.To) || (x.From == y.To && x.To == y.From);
-        }
-
-        public int GetHashCode(BookmarkSimilarityIndex obj)
-        {
-            return (((long)obj.From.GetHashCode()) + ((long)obj.To.GetHashCode())).GetHashCode();
-        }
-    }
-
-    public class BookmarkSimilarityIndex
-    {
-        public BookmarkSimilarityIndex(Bookmark from, Bookmark to, int dist)
-        {
-            this.From = from;
-            this.To = to;
-            this.Distance = dist;
-        }
-
-        public Bookmark From
-        {
-            get;
-            set;
-        }
-
-        public Bookmark To
-        {
-            get;
-            set;
-        }
-
-        public int Distance
-        {
-            get;
-            set;
-        }
-    }
-
-    public class BookmarksSimilarityResult
-    {
-        public ICollection<BookmarkSimilarityIndex> SimilarBookmarks
-        {
-            get;
-            set;
-        }
-
-        public IDictionary<string, SortedSet<Bookmark>> BookmarksByServer
-        {
-            get;
-            set;
-        }
-
-        public Dictionary<Bookmark, ICollection<BookmarkSimilarityIndex>> PrecalculatedSimilarities
-        {
-            get;
-            private set;
-        }
-
-        public void PrecalculateSimilarities()
-        {
-            this.PrecalculatedSimilarities = new Dictionary<Bookmark, ICollection<BookmarkSimilarityIndex>>();
-
-            foreach (var similarityIndex in this.SimilarBookmarks)
-            {
-                this.AddBookmarkToList(similarityIndex.From, similarityIndex);
-                this.AddBookmarkToList(similarityIndex.To, similarityIndex);
-            }
-        }
-
-        protected void AddBookmarkToList(Bookmark node, BookmarkSimilarityIndex index)
-        {
-            if (!this.PrecalculatedSimilarities.ContainsKey(node))
-            {
-                this.PrecalculatedSimilarities.Add(node, new List<BookmarkSimilarityIndex>());
-            }
-
-            this.PrecalculatedSimilarities[node].Add(index);
-        }
-    }
-
-    public class SimilarityCalculator : AbstractBookmarksVisitor
+    public class TrieBasedSimilarityCalculator : AbstractBookmarksVisitor
     {
         const int DISTANCE_THRESHOLD = 10;
         protected List<Bookmark> bookmarks;
 
-        public SimilarityCalculator()
+        public TrieBasedSimilarityCalculator()
         {
             this.bookmarks = new List<Bookmark>();
         }
@@ -109,7 +22,7 @@ namespace Engine
         }
 
         protected int GetDistance(string s, string t)
-            {
+        {
             // degenerate cases
             if (s == t) return 0;
             if (s.Length == 0) return t.Length;
@@ -123,9 +36,7 @@ namespace Engine
             // this row is A[0][i]: edit distance for an empty s
             // the distance is just the number of characters to delete from t
             for (int i = 0; i < v0.Length; i++)
-            {
                 v0[i] = i;
-            }
 
             for (int i = 0; i < s.Length; i++)
             {
@@ -144,9 +55,7 @@ namespace Engine
 
                 // copy v1 (current row) to v0 (previous row) for next iteration
                 for (int j = 0; j < v0.Length; j++)
-                {
                     v0[j] = v1[j];
-                }
             }
 
             return v1[t.Length];
@@ -208,6 +117,8 @@ namespace Engine
             this.bookmarks = new List<Bookmark>();
             root.Accept(this);
 
+            this.bookmarks = this.LexicographicallySort(this.bookmarks);
+
             var rangePartitioner = Partitioner.Create(0, this.bookmarks.Count);
 
             var dictionary = new ConcurrentDictionary<string, SortedSet<Bookmark>>();
@@ -241,6 +152,48 @@ namespace Engine
             });
 
             return totalResult;
+        }
+
+        public List<Bookmark> GetList(BookmarkDirectory directory)
+        {
+            this.bookmarks = new List<Bookmark>();
+            directory.Accept(this);
+
+            return new List<Bookmark>(this.bookmarks);
+        }
+
+        public List<Bookmark> LexicographicallySort(List<Bookmark> bookmarks)
+        {
+            Trie<Bookmark> trie = new Trie<Bookmark>();
+
+            foreach (Bookmark bookmark in bookmarks)
+            {
+                try
+                {
+                    trie.Insert(bookmark.Url, bookmark);
+                }
+                catch (DuplicateElementException e)
+                {
+                    Bookmark original = trie.Get(bookmark.Url);
+                    //original.
+                    if (original != null)
+                    {
+                        if (Math.Max(original.Tags.Count, bookmark.Tags.Count) > 0)
+//                        if (original.Tags.Count != bookmark.Tags.Count)
+                        {
+                            HashSet<Tag> mergedTags = new HashSet<Tag>();
+                            mergedTags.UnionWith(original.Tags);
+                            mergedTags.UnionWith(bookmark.Tags);
+
+                            original.Tags = mergedTags.ToList();
+                        }
+
+                        Console.Write("Hello");
+                    }
+                }
+            }
+
+            return trie.Select(item => item.Value).ToList();
         }
     }
 }

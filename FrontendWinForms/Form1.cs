@@ -135,18 +135,25 @@ namespace FrontendWinForms
 
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                importer = ImporterRegistry.GetInstance().GetImporterForFile(this.openFileDialog1.FileName); // this.importers[this.openFileDialog1.FilterIndex - 2];
-                this.data = importer.FromFile(this.openFileDialog1.FileName);
-
-                this.rootNodes.Add(this.data);
-                this.treeListView1.SetObjects(this.rootNodes);
+                this.importFromFile(this.openFileDialog1.FileName);
             }
+        }
+
+        protected void importFromFile(string filePath)
+        {
+            importer = ImporterRegistry.GetInstance().GetImporterForFile(filePath);
+            this.data = importer.FromFile(filePath);
+
+            this.rootNodes.Add(this.data);
+            this.treeListView1.SetObjects(this.rootNodes);
         }
 
         protected void setListViewItems(BookmarkDirectory directory)
         {
             if (directory != null)
-            this.listView1.SetObjects(directory.Children);
+            {
+                this.listView1.SetObjects(directory.Children);
+            }
         }
 
         private void findDuplicitiesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -182,6 +189,9 @@ namespace FrontendWinForms
         {
             var qualifier = new SimilarityCalculator();
 
+            var trieBasedQualifier = new TrieBasedSimilarityCalculator();
+            var data = trieBasedQualifier.LexicographicallySort(trieBasedQualifier.GetList(this.data));
+
             var parallelResult = qualifier.QualifyByServerParallel(this.data);
 
             var result = qualifier.QualifyByServer(this.data);
@@ -191,6 +201,24 @@ namespace FrontendWinForms
 
             }
 
+        }
+
+        private void Form1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void Form1_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] filePaths = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            foreach (string path in filePaths)
+            {
+                this.importFromFile(path);
+            }
         }
     }
 }

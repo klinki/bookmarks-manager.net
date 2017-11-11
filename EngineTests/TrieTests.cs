@@ -51,5 +51,47 @@ namespace Engine.Tests
 
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [TestMethod()]
+        public void HandlingDuplicitiesTest()
+        {
+            Trie<int> trie = new Trie<int>();
+
+            try
+            {
+                trie.Insert("ahoj", 0);
+                trie.Insert("ahoj", 1);
+                Assert.Fail("Expected exception to be thrown");
+            }
+            catch (DuplicateElementException e)
+            {
+                Assert.AreEqual(1, trie.Count);
+            }
+
+            var actual = trie.Take(1).Select(item => item.Value).ToArray();
+            var expected = new int[] { 0 };
+
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        [TestMethod()]
+        public void HandlingPrefixPartOfTreeTest()
+        {
+            Trie<int> trie = new Trie<int>();
+
+            trie.Insert("ahoj", 0);
+            trie.Insert("ahojky", 1);
+
+            foreach (Node<int> node in trie)
+            {
+                string str = this.GetString(node);
+                Console.WriteLine(str);
+            }
+
+            var actual = trie.Take(7).Select(item => item.Value).ToArray();
+            var expected = new int[] { 0, 1 };
+
+            CollectionAssert.AreEqual(expected, actual);
+        }
     }
 }

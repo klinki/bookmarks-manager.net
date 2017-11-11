@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 
-namespace Engine
+namespace Engine.Importers
 {
     public interface IBookmarkImporter
     {
